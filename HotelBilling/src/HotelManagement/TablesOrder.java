@@ -1,8 +1,12 @@
+package HotelManagement;
 import java.awt.EventQueue;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -11,10 +15,21 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import java.awt.Font;
 import javax.swing.SwingConstants;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class TablesOrder {
 
 	private JFrame frame;
+	JComboBox comboBox;
+	JCheckBox[] checkbox ;
+	Hashtable<String,ArrayList<String>> List ;
+	ArrayList<String> selectedchkbx= new ArrayList<String>();
+	JPanel panel;
+	String selectedTablenum;
+  	int r=0;
+
 
 	/**
 	 * Launch the application.
@@ -56,7 +71,7 @@ public class TablesOrder {
 		lblNewLabel.setBounds(66, 41, 98, 30);
 		frame.getContentPane().add(lblNewLabel);
 		
-		JComboBox comboBox = new JComboBox();
+		comboBox = new JComboBox();
 		comboBox.setFont(new Font("Arial", Font.PLAIN, 12));
     	comboBox.setBounds(198, 41, 143, 34);
 		frame.getContentPane().add(comboBox);
@@ -74,38 +89,84 @@ public class TablesOrder {
 		        } catch (IOException e1) {
 		            e1.printStackTrace();
 		        }
-  
+		        
+      comboBox.addActionListener(new ActionListener(){
+		        	 public void actionPerformed(ActionEvent e) {
+		        		 selectedTablenum = comboBox.getSelectedItem().toString();
+		        		// System.out.print(selectedTablenum);
+		        	 }
+		        });
+      
+			
 		 String eachline;
 		 JPanel panel = new JPanel();
 		 int y=85;
 				try {
 					BufferedReader reader = new BufferedReader(new FileReader("D:\\Java Class\\Project\\ItemCost.txt"));
+			      	checkbox= new JCheckBox [FileCounter.getCountRows()];
+
 					while ((eachline = reader.readLine()) != null) 
 					{
 					    String cols[] = eachline.split(",");
-					    	//System.out.println(cols[0]);
-				    	JCheckBox c = new JCheckBox(cols[0]);
-								c.setBounds(6, y, 97, 23);
-							frame.getContentPane().add(c);	    
+				    	 checkbox[r] = new JCheckBox(cols[0]);
+								checkbox[r].setBounds(6, y, 97, 23);
+							frame.getContentPane().add(checkbox[r]);	    
+
+				checkbox[r].addActionListener(new ActionListener() {
+								public void actionPerformed(ActionEvent e) {
+									JCheckBox checkbox = (JCheckBox) e.getSource();
+								
+							    if (checkbox.isSelected()) {
+							        selectedchkbx.add(checkbox.getText());
+							       
+							        r++;
+							    } 
+							    else {
+							        selectedchkbx.remove(checkbox.getText());
+							    }
+							    //System.out.print(checkbox.getText());
+								}
+							});
 							y+=20;
-					   
+							 
 				}
 					reader.close();
 				
 				}
-
-					catch (FileNotFoundException e) {
-					e.printStackTrace();
+					catch (FileNotFoundException e1) {
+					e1.printStackTrace();
 					}
-				frame.add(panel);
+				
+			
+				JButton submitbutton = new JButton("SUBMIT");
+				submitbutton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						
+						List = new Hashtable<String, ArrayList<String>>();
+						{
+							List.put(selectedTablenum, selectedchkbx);
+
+						}
+						
+						Enumeration<String> e1 = List.keys();			
+						while (e1.hasMoreElements()) {
+							String t = e1.nextElement();				//key 
+							ArrayList<String> value= List.get(t);		//value
+							System.out.println(t + value);
+						}
+						
+					 }});
+				
+				
+				submitbutton.setFont(new Font("Arial", Font.PLAIN, 14));
+				submitbutton.setBounds(279, 198, 110, 34);
+				frame.getContentPane().add(submitbutton);
 		        frame.setVisible(true);
 		        
 		        
-		 
-				
-	}	
+	}
 }
-				
+   			
 				
 				
 				
