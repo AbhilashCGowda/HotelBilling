@@ -57,10 +57,10 @@ public class TableNumber {
 		frame.getContentPane().add(txtbxtablenum);
 		txtbxtablenum.setColumns(10);
 		
-		JLabel lblNewLabel = new JLabel("Tables Available");
+		JLabel lblNewLabel = new JLabel("TABLES AVAILABLE");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setFont(new Font("Arial", Font.PLAIN, 15));
-		lblNewLabel.setBounds(55, 109, 127, 30);
+		lblNewLabel.setBounds(55, 109, 149, 30);
 		frame.getContentPane().add(lblNewLabel);
 		
 		JButton btnNewButton = new JButton("SUBMIT");
@@ -81,9 +81,9 @@ public class TableNumber {
 					}
 					p.close();
 					
-					JOptionPane.showMessageDialog(null,"Saved Successfully");
+					JOptionPane.showMessageDialog(frame,"Saved Successfully");
 					txtbxtablenum.setText("");
-					
+					OrderPrice op= new OrderPrice();		//opens OrderPrice page
 				}
 				catch(Exception  e1)
 				{
@@ -95,7 +95,7 @@ public class TableNumber {
 			}
 		});
 		btnNewButton.setFont(new Font("Arial", Font.PLAIN, 14));
-		btnNewButton.setBounds(294, 208, 101, 30);
+		btnNewButton.setBounds(279, 209, 101, 30);
 		frame.getContentPane().add(btnNewButton);
 		
 		

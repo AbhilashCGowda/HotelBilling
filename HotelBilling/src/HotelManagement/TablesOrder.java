@@ -1,9 +1,10 @@
 package HotelManagement;
-import java.awt.EventQueue;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -19,10 +20,10 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class TablesOrder {
+public class TablesOrder extends JFrame {
 
 	private JFrame frame;
-	JComboBox comboBox;
+	JComboBox comboBox= new JComboBox() ;
 	JCheckBox[] checkbox ;
 	Hashtable<String,ArrayList<String>> List ;
 	ArrayList<String> selectedchkbx= new ArrayList<String>();
@@ -30,37 +31,9 @@ public class TablesOrder {
 	String selectedTablenum;
   	int r=0;
 
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					TablesOrder window = new TablesOrder();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Create the application.
-	 * @throws IOException 
-	 * @throws FileNotFoundException 
-	 */
-	public TablesOrder() throws FileNotFoundException, IOException {
-		initialize();
-	}
-
-	/**
-	 * Initialize the contents of the frame.
-	 */
-	private void initialize() throws FileNotFoundException, IOException {
-		frame = new JFrame();
+  		public TablesOrder() throws IOException {
+		super("TablesOrder");
+  		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
@@ -71,14 +44,12 @@ public class TablesOrder {
 		lblNewLabel.setBounds(66, 41, 98, 30);
 		frame.getContentPane().add(lblNewLabel);
 		
-		comboBox = new JComboBox();
+		comboBox.addItem("Select a number");
 		comboBox.setFont(new Font("Arial", Font.PLAIN, 12));
     	comboBox.setBounds(198, 41, 143, 34);
 		frame.getContentPane().add(comboBox);
 		
-				comboBox.addItem("Select a number");
-				
-		        // Read numbers from the text document
+ // Read numbers from the text document
 		        try {
 		        	BufferedReader reader = new BufferedReader(new FileReader("D:\\Java Class\\Project\\TablesList.txt"));
 		            String line;
@@ -97,7 +68,7 @@ public class TablesOrder {
 		        	 }
 		        });
       
-			
+//add Checkbox from ItemCost.txt text document		
 		 String eachline;
 		 JPanel panel = new JPanel();
 		 int y=85;
@@ -113,50 +84,58 @@ public class TablesOrder {
 							frame.getContentPane().add(checkbox[r]);	    
 
 				checkbox[r].addActionListener(new ActionListener() {
-								public void actionPerformed(ActionEvent e) {
-									JCheckBox checkbox = (JCheckBox) e.getSource();
-								
-							    if (checkbox.isSelected()) {
-							        selectedchkbx.add(checkbox.getText());
-							       
-							        r++;
-							    } 
-							    else {
-							        selectedchkbx.remove(checkbox.getText());
-							    }
-							    //System.out.print(checkbox.getText());
-								}
-							});
-							y+=20;
-							 
-				}
+				public void actionPerformed(ActionEvent e) {
+				JCheckBox checkbox = (JCheckBox) e.getSource();
+					
+			    	if (checkbox.isSelected()) {
+			    		selectedchkbx.add(checkbox.getText());
+			    		r++;
+			    	} 
+			    	else {
+			    		selectedchkbx.remove(checkbox.getText());
+			    		}
+			    	//System.out.print(checkbox.getText());
+						}
+					});
+				y+=20;
+					}
 					reader.close();
 				
 				}
-					catch (FileNotFoundException e1) {
+				catch (FileNotFoundException e1) {
 					e1.printStackTrace();
-					}
-				
+				}
 			
 				JButton submitbutton = new JButton("SUBMIT");
 				submitbutton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						
+//Hashtable List created to put table num and respective orders and saved in GenerateBill document					
 						List = new Hashtable<String, ArrayList<String>>();
 						{
 							List.put(selectedTablenum, selectedchkbx);
-
 						}
 						
 						Enumeration<String> e1 = List.keys();			
 						while (e1.hasMoreElements()) {
-							String t = e1.nextElement();				//key 
-							ArrayList<String> value= List.get(t);		//value
-							System.out.println(t + value);
+							String key = e1.nextElement();				//key 
+							ArrayList<String> value= List.get(key);		//value
+							//System.out.println(key + value);
+							PrintWriter print;
+							try {
+								print=new PrintWriter(new FileWriter("D:\\Java Class\\Project\\GenerateBill.txt",true));
+								print.println(key + "-" +value);
+								print.close();
+								Billing bi= new Billing();
+							
 						}
-						
-					 }});
-				
+							catch (IOException e2) {
+								e2.printStackTrace();
+							}
+					
+						}
+							
+					}   
+				});
 				
 				submitbutton.setFont(new Font("Arial", Font.PLAIN, 14));
 				submitbutton.setBounds(279, 198, 110, 34);

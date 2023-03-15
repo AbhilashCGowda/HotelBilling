@@ -1,8 +1,5 @@
 package HotelManagement;
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
-import javax.swing.JTextArea;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
@@ -11,43 +8,19 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
 
-public class OrderPrice {
+public class OrderPrice extends JFrame {
 
 	private JFrame frame;
 	private JTextField txtbxitem;
 	private JTextField txtbxcost;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					OrderPrice window = new OrderPrice();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Create the application.
-	 */
 	public OrderPrice() {
-		initialize();
-	}
-
-	/**
-	 * Initialize the contents of the frame.
-	 */
-	private void initialize() {
+		super("Orders");
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -94,19 +67,32 @@ public class OrderPrice {
 					p.println(item.trim()+ "," + cost.trim());
 					p.close();
 					
-					JOptionPane.showMessageDialog(null,"Item Saved Successfully");
+					JOptionPane.showMessageDialog(frame,"Item Saved Successfully");
 					txtbxitem.setText("");
 					txtbxcost.setText("");
 					
 				}
-				catch(Exception  e1)
-				{
-					
-				}
-				
+				catch(Exception  e1) {
+					e1.printStackTrace();
+			    }
 			}
 		});
-		btnNewButton.setBounds(278, 203, 107, 30);
+		btnNewButton.setBounds(154, 202, 107, 30);
 		frame.getContentPane().add(btnNewButton);
+		
+		JButton btnNewButton_1 = new JButton("NEXT");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					TablesOrder to=new TablesOrder();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnNewButton_1.setFont(new Font("Arial", Font.PLAIN, 14));
+		btnNewButton_1.setBounds(298, 202, 96, 27);
+		frame.getContentPane().add(btnNewButton_1);
+		frame.setVisible(true);
 	}
 }
