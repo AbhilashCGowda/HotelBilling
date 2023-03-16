@@ -25,7 +25,8 @@ public class TablesOrder extends JFrame {
 	private JFrame frame;
 	JComboBox comboBox= new JComboBox() ;
 	JCheckBox[] checkbox ;
-	Hashtable<String,ArrayList<String>> List ;
+	Hashtable<String,ArrayList<String>> tableorderlist = new Hashtable<String, ArrayList<String>>();
+;
 	ArrayList<String> selectedchkbx= new ArrayList<String>();
 	JPanel panel;
 	String selectedTablenum;
@@ -61,7 +62,8 @@ public class TablesOrder extends JFrame {
 		            e1.printStackTrace();
 		        }
 		        
-      comboBox.addActionListener(new ActionListener(){
+ //Select table num from dropdown     
+		        comboBox.addActionListener(new ActionListener(){
 		        	 public void actionPerformed(ActionEvent e) {
 		        		 selectedTablenum = comboBox.getSelectedItem().toString();
 		        		// System.out.print(selectedTablenum);
@@ -70,7 +72,6 @@ public class TablesOrder extends JFrame {
       
 //add Checkbox from ItemCost.txt text document		
 		 String eachline;
-		 JPanel panel = new JPanel();
 		 int y=85;
 				try {
 					BufferedReader reader = new BufferedReader(new FileReader("D:\\Java Class\\Project\\ItemCost.txt"));
@@ -109,29 +110,16 @@ public class TablesOrder extends JFrame {
 				JButton submitbutton = new JButton("SUBMIT");
 				submitbutton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-//Hashtable List created to put table num and respective orders and saved in GenerateBill document					
-						List = new Hashtable<String, ArrayList<String>>();
-						{
-							List.put(selectedTablenum, selectedchkbx);
-						}
+//Hashtable List created to put table num and respective orders 					
 						
-						Enumeration<String> e1 = List.keys();			
+						tableorderlist.put(selectedTablenum, selectedchkbx);
+						
+						Enumeration<String> e1 = tableorderlist.keys();			
 						while (e1.hasMoreElements()) {
 							String key = e1.nextElement();				//key 
-							ArrayList<String> value= List.get(key);		//value
-							//System.out.println(key + value);
-							PrintWriter print;
-							try {
-								print=new PrintWriter(new FileWriter("D:\\Java Class\\Project\\GenerateBill.txt",true));
-								print.println(key + "-" +value);
-								print.close();
-								Billing bi= new Billing();
-							
-						}
-							catch (IOException e2) {
-								e2.printStackTrace();
-							}
-					
+							ArrayList<String> value= tableorderlist.get(key);		//value
+
+							Billing bi= new Billing(tableorderlist);						 //Object of next page
 						}
 							
 					}   
@@ -146,6 +134,6 @@ public class TablesOrder extends JFrame {
 	}
 }
    			
-				
+				   
 				
 				

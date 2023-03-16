@@ -1,21 +1,9 @@
 package HotelManagement;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
 import java.awt.Font;
-import javax.swing.SwingConstants;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -23,52 +11,45 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Scanner;
-import java.awt.event.ActionEvent;
 
-public class Billing extends JFrame {
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
+
+public class Billing  {
 	
 	private JFrame frame;
-	Hashtable<String, Integer> pricelist ;
 	JComboBox<String> comboBox= new JComboBox<String>();
-	Hashtable<String, Integer> foodlist;
-	BufferedReader reader;
-	String line;
-	int selectedTablenum=0;
-	 int quantity ;
-	Hashtable<Integer, Integer> billlist;
-	Integer key;
-	Integer value;
+	Hashtable<String, Integer> foodlist =  new Hashtable<String, Integer>();
+	int totalPrice = 0;
+	String selectedTablenum= "";
+	Hashtable<String, Integer> billlist= new Hashtable<String, Integer> ();
+	Hashtable<String,ArrayList<String>> tableorderlist =null;
 	
-	public Billing() throws NumberFormatException, IOException {
-		super("billing");
+	public Billing(	Hashtable<String,ArrayList<String>> referncevariable) {
+		super();
+		tableorderlist =referncevariable;
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 
 //taking first array from GenerateBill document and adding it as dropdown
-	String eachline;
 	comboBox.addItem("Select a number");
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader("D:\\Java Class\\Project\\GenerateBill.txt"));
-			
-			while ((eachline = reader.readLine()) != null) {               
-				String cols[] = eachline.split("-");					//splitting the text using delimiter
-				comboBox.addItem(cols[0].trim());						//adding values to dropdown
-				//System.out.println(cols[0]);
-			}
-				reader.close();
-		}
-				catch (IOException e1) {
-					e1.printStackTrace();
-		}
+	 Enumeration <String> k = tableorderlist.keys();
+	 while(k.hasMoreElements())
+	 {
+		 String key = (String)k.nextElement();
+				comboBox.addItem(key);						//adding values to dropdown
+	 }
+		 
 //Second Hashtable with items list as key and Price as Value
-		foodlist = new Hashtable<String, Integer>();
-		String line;
 
+	 String line;
 		try (BufferedReader br = new BufferedReader(new FileReader("D:\\Java Class\\Project\\ItemCost.txt"))) {
 		    while ((line = br.readLine()) != null) {
 		        String[] values = line.split(",");
@@ -85,31 +66,28 @@ public class Billing extends JFrame {
 		while (keys.hasMoreElements()) {
 		    String key = keys.nextElement();
 		    int value = foodlist.get(key);
-		  //System.out.println(key + " : " + value);
+		 // System.out.println(key + " : " + value);
 		}
 
 		
 //Hashtable to get table number and price of that particular table	
-		billlist= new Hashtable<Integer, Integer> ();					//hashtable
-			try {
-		BufferedReader reader = new BufferedReader(new FileReader("D:\\Java Class\\Project\\GenerateBill.txt"));
-		
-		while ((line = reader.readLine()) != null) {
-		    String[] cols = line.split("-");								
-		    quantity = Integer.parseInt(cols[0]);							
-		    String[] dish = cols[1].replaceAll("[\\[\\]]", "").split(", ");
-		    int totalPrice = 0;
-		    for (String item : dish) {
-		        totalPrice += foodlist.get(item);
-		    }
-		    String name=  dish + " : " + totalPrice;
-		    //System.out.println("Total price for " + line + ": " + totalPrice);
-				billlist.put(quantity,totalPrice);
+		//billlist= new Hashtable<Integer, Integer> ();					//hashtable
+		try {
+			Enumeration<String> price=tableorderlist.keys();
+			while(price.hasMoreElements()) {
+				String key=price.nextElement();
+				ArrayList<String> value=tableorderlist.get(key);
+				System.out.println(value);
+			    for (String itemlist : value) {
+			        totalPrice += foodlist.get(itemlist);
+	   }
+	   //System.out.println("Total price for " + key + ": " + totalPrice);
+				billlist.put(key,totalPrice);
+	}
+			//System.out.println(billlist);
+		}catch(Exception e) {
+			
 		}
-		}
-			catch (IOException e) {
-			    e.printStackTrace();
-			}
 			
 		comboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -129,18 +107,17 @@ public class Billing extends JFrame {
 		JButton btnNewButton = new JButton("GENERATE BILL");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				selectedTablenum =Integer.parseInt( (String)comboBox.getSelectedItem());
-				 int totalPrice = 0;
-				 Enumeration<Integer> e1 = billlist.keys();
-			        while (e1.hasMoreElements()) {
-			            int key = e1.nextElement();
-			            if (key == selectedTablenum) {
+				selectedTablenum =(String)comboBox.getSelectedItem();
+				Enumeration<String> e1 = billlist.keys();
+				while (e1.hasMoreElements()) {
+					String key = e1.nextElement();
+					if (key.equalsIgnoreCase(selectedTablenum)){
 			                totalPrice = billlist.get(key);
 			                break;
 			            }
 			        }
 				
-			        JOptionPane.showMessageDialog(frame, "Bill Generated for" + selectedTablenum);
+			        JOptionPane.showMessageDialog(frame, "Bill Generated for " + selectedTablenum);
 			   
 //using printwriter to print the bill in the textdocument
 			        
